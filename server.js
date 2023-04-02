@@ -34,15 +34,12 @@ app.use((error, request, response, next) => {
     response.status(500).send(error.message);
 });
 
-
-
 app.get('/movie', movieHandler);
-
 app.get('/weather', weatherHandler);
 
 function movieHandler(request, response, next) {
     getMovies(request, response, next)
-    .then(summaries => response.send(summaries))
+    async (summaries => response.send(summaries))
     .catch((error) => {
         console.log(error);
         response.status(500).send('Movies are unavailable');
@@ -52,11 +49,17 @@ function movieHandler(request, response, next) {
 function weatherHandler(request, response, next) {
     const { lat, lon } = request.query;
     weather(request, response, next)
-    .then(summaries => response.send(summaries))
+    async (summaries => response.send(summaries))
     .catch((error) => {
         console.error(error);
         response.status(500).send(`Sorry. Something isn't right!`);
     });
+    
+    //let lat = request.query.lat;
+    //let lon = request.query.lon;
+    let cityName = request.query.searchQuery
+    let city = weather.find(city => city.cityName.toLowerCase() === cityName.toLowerCase());
+    console.log(request.query);
 }
 app.listen(PORT, () => console.log(`We are running on port ${PORT}!`));
 // /app.get('/weather', (request, response, next) => {
@@ -78,16 +81,12 @@ app.listen(PORT, () => console.log(`We are running on port ${PORT}!`));
 
 // app.get('/weather', (request, response, next) => {
 
-//     // TODO: accept queries - lat, lon, searchQuery
-//     let lat = request.query.lat;
-//     let lon = request.query.lon;
-//     let cityName = request.query.searchQuery
-
-//     console.log(request.query);
+// TODO: accept queries - lat, lon, searchQuery
+     
 
 //     //TODO: Find that city based on cityName
 
-//     let city = weather.find(city => city.cityName.toLowerCase() === cityName.toLowerCase());
+     
 
 
 //     response.status(200).send(city);
