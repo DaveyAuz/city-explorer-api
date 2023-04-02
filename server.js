@@ -13,12 +13,13 @@ app.use(cors());
 const PORT = process.env.PORT || 3002;
 
 app.get('/', (request, response) => {
-    console.log(request);
-    response.status(200).send(request);
-    response.status(200).send('Welcome to my Server!');
+    let req = request.query.name
+    console.log(req)
+    // console.log(request);
+    // response.status(200).send(request);
+    response.status(200).send('Welcome to My Server');
 });
 
-app.listen(PORT, () => console.log(`We are running on port ${PORT}!`));
 
 //app.get('/photos', getPhotos);
 
@@ -41,27 +42,27 @@ app.get('/weather', weatherHandler);
 
 function movieHandler(request, response, next) {
     getMovies(request, response, next)
-        .then(summaries => response.send(summaries))
-        .catch((error) => {
-            console.log(error);
-            response.status(500).send('Movies are unavailable');
-        });
+    .then(summaries => response.send(summaries))
+    .catch((error) => {
+        console.log(error);
+        response.status(500).send('Movies are unavailable');
+    });
 }
-
 
 function weatherHandler(request, response, next) {
-    // const { lat, lon } = request.query;
+    const { lat, lon } = request.query;
     weather(request, response, next)
-        .then(summaries => response.send(summaries))
-        .catch((error) => {
-            console.error(error);
-            response.status(500).send('Sorry. Something isn\'t right!');
-        });
+    .then(summaries => response.send(summaries))
+    .catch((error) => {
+        console.error(error);
+        response.status(500).send(`Sorry. Something isn't right!`);
+    });
 }
+app.listen(PORT, () => console.log(`We are running on port ${PORT}!`));
 // /app.get('/weather', (request, response, next) => {
-
-//     let url = 'http://api.weatherbit.io/v2.0/forecast/daily/?key=1df3370cd0124f7484df5f36bed32ce6&land=en&lat=47.6062&lon=-122.3321&days=5'
-//     // async function getPhotos (request, response, next) {
+    
+    //     let url = 'http://api.weatherbit.io/v2.0/forecast/daily/?key=1df3370cd0124f7484df5f36bed32ce6&land=en&lat=47.6062&lon=-122.3321&days=5'
+    //     // async function getPhotos (request, response, next) {
 //     //     try keywordFromFrontEnd = request.query.keyword;
 //     // }
 // })
@@ -127,8 +128,8 @@ function weatherHandler(request, response, next) {
 // }
 
 // module.exports = getPhotos;
-app.listen(PORT, () => {
-    console.log(`Server is running on port ${PORT}`);
-})
+// app.listen(PORT, () => {
+//     console.log(`Server is running on port ${PORT}`);
+// })
 
 
