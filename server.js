@@ -8,9 +8,12 @@ const getPhotos = require('./modules/photos.js');
 const app = express();
 const getMovies = require('./modules/movies.js');
 const getWeather = require('./modules/weather.js');
+const weather = require('./assets/weather.json');
 
 app.use(cors());
 const PORT = process.env.PORT || 3002;
+app.get('/movie', movieHandler);
+app.get('/weather', weatherHandler);
 
 app.get('/', (request, response) => {
     let req = request.query.name
@@ -19,7 +22,6 @@ app.get('/', (request, response) => {
     // response.status(200).send(request);
     response.status(200).send('Welcome to My Server');
 });
-
 
 //app.get('/photos', getPhotos);
 
@@ -34,9 +36,6 @@ app.use((error, request, response, next) => {
     response.status(500).send(error.message);
 });
 
-app.get('/movie', movieHandler);
-app.get('/weather', weatherHandler);
-
 function movieHandler(request, response, next) {
     getMovies(request, response, next)
     async (summaries => response.send(summaries))
@@ -47,20 +46,27 @@ function movieHandler(request, response, next) {
 }
 
 function weatherHandler(request, response, next) {
-    const { lat, lon } = request.query;
-    weather(request, response, next)
-    async (summaries => response.send(summaries))
-    .catch((error) => {
-        console.error(error);
-        response.status(500).send(`Sorry. Something isn't right!`);
-    });
-    
-    //let lat = request.query.lat;
-    //let lon = request.query.lon;
-    let cityName = request.query.searchQuery
-    let city = weather.find(city => city.cityName.toLowerCase() === cityName.toLowerCase());
     console.log(request.query);
-}
+    let cityName =request.query.searchQuery;
+    let city = weather.find((city) => city.city_name.toLowerCase() === cityName.toLowerCase());
+    console.log(request.query);
+    response.send(city);
+};  
+// function weatherHandler(request, response, next) {
+//     const { lat, lon } = request.query;
+//     weather(request, response, next)
+//     async (summaries => response.send(summaries))
+//     .catch((error) => {
+//         console.error(error);
+//         response.status(500).send(`Sorry. Something isn't right!`);
+//     });
+    
+//     //let lat = request.query.lat;
+//     //let lon = request.query.lon;
+//     let cityName = request.query.searchQuery
+//     let city = weather.find(city => city.cityName.toLowerCase() === cityName.toLowerCase());
+//     console.log(request.query);
+// }
 app.listen(PORT, () => console.log(`We are running on port ${PORT}!`));
 // /app.get('/weather', (request, response, next) => {
     
