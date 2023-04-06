@@ -1,23 +1,24 @@
 
 'use strict';
-
+const axios = require('axios');
 const express = require('express');
 require('dotenv').config();
 const cors = require('cors');
 const getPhotos = require('./modules/photos.js');
 const app = express();
 const getMovies = require('./modules/movies.js');
-const getWeather = require('./modules/weather.js');
+//const getWeather = require('./modules/weather.js');
 const weather = require('./assets/weather.json');
+
 
 app.use(cors());
 const PORT = process.env.PORT || 3002;
 app.get('/movie', movieHandler);
-app.get('/weather', weatherHandler);
+app.get('/weather', getWeather);
 
 app.get('/', (request, response) => {
     let req = request.query.name
-    console.log(req)
+    console.log('this is the request.query', request.query)
     // console.log(request);
     // response.status(200).send(request);
     response.status(200).send('Welcome to My Server');
@@ -32,7 +33,7 @@ app.get('*', (request, response) => {
 
 // **** ERROR HANDLING - PLUG AND PLAY CODE FROM EXPRESS DOCS ****
 app.use((error, request, response, next) => {
-    console.log(error.message);
+    console.log('this is the error', error.message);
     response.status(500).send(error.message);
 });
 
@@ -40,18 +41,69 @@ function movieHandler(request, response, next) {
     getMovies(request, response, next)
     async (summaries => response.send(summaries))
     .catch((error) => {
-        console.log(error);
+        console.log('this is the error', error.message);
         response.status(500).send('Movies are unavailable');
     });
-}
+};
 
-function weatherHandler(request, response, next) {
-    console.log(request.query);
-    let cityName =request.query.searchQuery;
-    let city = weather.find((city) => city.city_name.toLowerCase() === cityName.toLowerCase());
-    console.log(request.query);
-    response.send(city);
-};  
+let weatherCache = {};
+async function getWeather(request, response, next) {
+        //console.log('getWeather')// try {
+        console.log(request.query);
+        const city = request.query.searchQuery;
+        const key = process.env.REACT_APP_WEATHERBIT_API_KEY;
+        const url = `https://api.weatherbit.io/v2.0/forecast/daily?city=${city}&key=${process.env.REACT_APP_WEATHERBIT_API_KEY}`;
+        console.log('this is the url', url);
+        const weather = await axios.get(url);
+        response.status(200).send(weather.data);
+        let weatherKey = weather.data.weather[0];
+        
+}
+// function weatherHandler(request, response, next) {
+//     console.log(request.query);
+//     let cityName =request.query.searchQuery;
+//     let city = weather.find((city) => city.city_name.toLowerCase() === cityName.toLowerCase());
+//     console.log(request.query);
+//     response.send(city);
+// };  
+
+// class forecast {
+//     constructor(data) {
+//         this.data = data;
+//     } else {
+//         this.data = [];
+//         this.data.push(data);
+        
+app.listen(PORT, () => console.log(`We are running on port ${PORT}!`));  
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 // function weatherHandler(request, response, next) {
 //     const { lat, lon } = request.query;
 //     weather(request, response, next)
@@ -67,7 +119,7 @@ function weatherHandler(request, response, next) {
 //     let city = weather.find(city => city.cityName.toLowerCase() === cityName.toLowerCase());
 //     console.log(request.query);
 // }
-app.listen(PORT, () => console.log(`We are running on port ${PORT}!`));
+
 // /app.get('/weather', (request, response, next) => {
     
     //     let url = 'http://api.weatherbit.io/v2.0/forecast/daily/?key=1df3370cd0124f7484df5f36bed32ce6&land=en&lat=47.6062&lon=-122.3321&days=5'
