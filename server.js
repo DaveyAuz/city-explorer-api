@@ -19,11 +19,22 @@ app.get('/weather', getWeather);
 app.get('/', (request, response) => {
     let req = request.query.name
     console.log('this is the request.query', request.query)
-    // console.log(request);
-    // response.status(200).send(request);
+    console.log(request);
+    response.status(200).send(request);
     response.status(200).send('Welcome to My Server');
 });
 
+app.get('/photos', (request, response, next) => {
+
+    try {
+        //TODO: ACCEPT MY QUERIES ->/photos?searchQuery=Value
+    let keywordFromFrontEnd = request.query.searchQuery    
+        //TODO: BUILD MY URL FROM AXIOS
+    let url = ``    
+    } catch (error) {
+        next(error);
+    }
+    });
 //app.get('/photos', getPhotos);
 
 // *** CATCH ALL - AT THE BOTTOM AND SERVE AS A 404 ERROR MESSAGE
@@ -56,16 +67,15 @@ async function getWeather(request, response, next) {
         console.log('this is the url', url);
         const weather = await axios.get(url);
         response.status(200).send(weather.data);
-        let weatherKey = weather.data.weather[0];
-        
+        //let weatherKey = weather.data.weather[0];     
 }
-// function weatherHandler(request, response, next) {
-//     console.log(request.query);
-//     let cityName =request.query.searchQuery;
-//     let city = weather.find((city) => city.city_name.toLowerCase() === cityName.toLowerCase());
-//     console.log(request.query);
-//     response.send(city);
-// };  
+function weatherHandler(request, response, next) {
+    console.log(request.query);
+    let cityName =request.query.searchQuery;
+    let city = weather.find((city) => city.city_name.toLowerCase() === cityName.toLowerCase());
+    console.log(request.query);
+    response.send(city);
+};  
 
 // class forecast {
 //     constructor(data) {
