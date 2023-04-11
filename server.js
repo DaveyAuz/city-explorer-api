@@ -17,7 +17,6 @@ const PORT = process.env.PORT || 3002;
 app.listen(PORT, () => console.log(`We are running on port ${PORT}!`));  
 
 app.get('/movies', movieHandler);
-
 app.get('/weather', getWeather);
 
 // *** CATCH ALL - AT THE BOTTOM AND SERVE AS A 404 ERROR MESSAGE
